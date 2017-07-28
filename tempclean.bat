@@ -1,4 +1,4 @@
-﻿:: Temp File Cleaner v3 by Kyle Weller
+:: Temp File Cleaner v3 by ionstorm
 :: Converted from Powershell
 :: Added CCleaner cleaning locations
 :: Added System locations
