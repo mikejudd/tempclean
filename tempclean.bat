@@ -1,4 +1,5 @@
-:: Temp File Cleaner v3 by ionstorm
+:: Temp File Cleaner v4 by Kyle Weller
+:: Added Powershell Firefox profile cleanup since its more efficient
 :: Converted from Powershell
 :: Added CCleaner cleaning locations
 :: Added System locations
@@ -28,7 +29,7 @@ if /i "%WIN_VER:~0,9%"=="Microsoft" (
 		del /F /S /Q "%%x\Recent\*" 2>NUL
 	)
 ) else (
-	for /D %%x in ("%SystemDrive%\Users\*") do ( 
+	for /D %%x in ("%SystemDrive%\Users\*") do (
 		del /F /S /Q "%%x\AppData\LocalLow\Sun\Java\*" 2>NUL
 		del /F /S /Q "%%x\Appdata\LocalLow\Sun\Java\Deployment\cache\*" 2>NUL
 		del /F /S /Q "%%x\Appdata\LocalLow\Sun\Java\Deployment\javaws\cache\*" 2>NUL
@@ -61,7 +62,7 @@ if /i "%WIN_VER:~0,9%"=="Microsoft" (
 		del /F /S /Q "%%x\AppData\Roaming\Macromedia\Flash Player\*" 2>NUL
 		::del /F /S /Q "%%x\Documents\*.tmp" 2>NUL
 		del /F /S /Q "%%x\Appdata\Microsoft\Feeds Cache\*" 2>NUL
-		del /F /S /Q "%%x\Appdata\Local\Mozilla\Firefox\cache\*"  2>NUL
+		::del /F /S /Q "%%x\Appdata\Local\Mozilla\Firefox\cache\*"  2>NUL
 		::del /F /S /Q "%%x\Appdata\Local\Mozilla\Firefox\Profiles\*\cache\*" 2>NUL
 		::del /F /S /Q "%%x\Appdata\Local\Mozilla\Firefox\Profiles\*\cache2\*" 2>NUL
 		del /F /S /Q "%%x\Appdata\Roaming\Macromedia\Flashp~1\*" 2>NUL
@@ -112,7 +113,7 @@ if /i "%WIN_VER:~0,9%"=="Microsoft" (
 
 	)
 )
-:: Cleanup System Files
+Echo [+] Cleanup System Files...
 del /F /S /Q "%ProgramData%\AVG2012\Log\*.log" 2>NUL
 del /F /S /Q "%ProgramData%\AVG2012\scanlogs\*.log" 2>NUL
 del /F /S /Q "%ProgramData%\AVG2012\update\backup\*" 2>NUL
@@ -125,13 +126,13 @@ del /F /S /Q "%ProgramData%\Microsoft\Windows Defender\Support\*.log" 2>NUL
 del /F /S /Q "%ProgramData%\Microsoft\Windows\WER\ReportQueue\*" 2>NUL
 del /F /S /Q "%ProgramData%\Microsoft\Windows\WER\ReportArchive\*" 2>NUL
 
-:: Clean up Misc Log files
+echo [+] Cleaning up Misc Log files...
 del /F /S /Q "%SystemDrive%\Windows\Logs\CBS\*.log" 2>NUL
 del /F /S /Q "%SystemDrive%\Windows\Logs\CBS\*.cab" 2>NUL
 del /F /S /Q "%SystemDrive%\Windows\Logs\DISM\*.log" 2>NUL
 del /F /S /Q "%SystemDrive%\Windows\Logs\DISM\*.cab" 2>NUL
 
-:: Clean up memory dump files
+echo [+] Cleaning up memory dump files...
 del /F /S /Q "%SystemDrive%\Windows\MEMORY.DMP" 2>NUL
 del /F /S /Q "%SystemDrive%\Windows\Minidump\*.dmp" 2>NUL
 
@@ -140,6 +141,10 @@ rmdir /s /q %SystemDrive%\$Recycle.Bin
 :: This empties all recycle bins on Windows XP and Server 2003
 rmdir /s /q %SystemDrive%\RECYCLER
 
-echo Finished Cleaning!
+echo [+] Cleaning Firefox Profiles...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "Remove-Item -path C:\Users\*\Appdata\Local\Mozilla\Firefox\Profiles\*.default\Cache\* -Recurse -Force -EA SilentlyContinue -Verbose"
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "Remove-Item -path C:\Users\*\Appdata\Local\Mozilla\Firefox\Profiles\*.default\cache2\* -Recurse -Force -EA SilentlyContinue -Verbose"
+
+echo [+] Finished Cleaning!
 timeout /t 5
 DEL "%~f0"
